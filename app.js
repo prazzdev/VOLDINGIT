@@ -96,6 +96,7 @@ app.get('/:category', (req, res) => {
     if(req.query.apikey != apiKey) {
         res.status(401).json({
             statusCode: res.statusCode,
+            message: "Not authorized"
         })
     } else {
         res.send(datas.filter(data => data.category_id == category_id))
