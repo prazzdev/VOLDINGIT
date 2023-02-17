@@ -21,7 +21,7 @@ const run = async () => {
         color:'orange'
     })
 
-    // get an item at key "leo" from collection animals
+    // get an item at key "leo" from collection animals :)
     let item = await animals.get('leo')
     console.log(question)
 }
