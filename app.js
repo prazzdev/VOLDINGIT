@@ -15,7 +15,7 @@ const run = async () => {
     let animals = db.collection('animals')
     let question = db.collection('questions')
 
-    // create an item in collection with key "leo"
+    // create an item in collection with key "leo" :)
     let leo = await animals.set('leo', {
         type:'cat',
         color:'orange'
