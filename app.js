@@ -7,6 +7,26 @@ const categories = require('./lib/categories')
 const { getData, postData } = require('./lib/response')
 const datas = require('./data')
 
+// DynamoDB
+const CyclicDb = require("@cyclic.sh/dynamodb")
+const db = CyclicDb("drab-gray-anemone-kitCyclicDB")
+
+const run = async () => {
+    let animals = db.collection('animals')
+    let question = db.collection('questions')
+
+    // create an item in collection with key "leo"
+    let leo = await animals.set('leo', {
+        type:'cat',
+        color:'orange'
+    })
+
+    // get an item at key "leo" from collection animals
+    let item = await animals.get('leo')
+    console.log(question)
+}
+run()
+
 const app = express()
 const port = 3000
 
@@ -33,63 +53,6 @@ app.get(`/`, (req, res) => {
     }
     
 })
-app.get(`/question`, (req, res) => {
-    if(req.query.apikey != apiKey) {
-        res.status(401).json({
-            statusCode: res.statusCode,
-            message: "Not Authorized"
-        })
-    } else {
-        res.render('add-question',
-        {
-            title: 'Add Question',
-            layout: 'layouts/main-layout',
-            apikey: apiKey
-        })
-    }
-})
-
-// app.get('/:category', (req, res) => {
-//     const categoryId = categories(req, res)
-//     if(req.query.apikey != apiKey) {
-//         res.status(401).json({
-//             statusCode: res.statusCode,
-//             message: "Not authorized"
-//         })
-//     } else {
-//         getData(`SELECT * FROM soal WHERE id_category = ${categoryId}`, res)
-//     }
-// })
-
-// app.get('/:category/:level', (req, res) => {
-//     const categoryId = categories(req, res)
-//     const level = req.params.level
-//     if(req.query.apikey != apiKey) {
-//         res.status(401).json({
-//             statusCode: res.statusCode,
-//             message: "Not authorized"
-//         })
-//     } else {
-//         getData(`SELECT * FROM soal WHERE id_category = ${categoryId} && level = ${level}`, res)
-//     }
-// })
-
-app.post('/question', (req, res) => {
-    console.log(req)
-    const { idCategory, level, image, question, jawaban_a, jawaban_b, jawaban_c, jawaban_d, jawaban_benar } = req.body
-    const data = {
-        idCategory, level, image, question, jawaban_a, jawaban_b, jawaban_c, jawaban_d, jawaban_benar
-    }
-    if(req.query.apikey != apiKey) {
-        res.status(401).json({
-            statusCode: res.statusCode,
-            message: "Not authorized"
-        })
-    } else {
-        const query = `INSERT INTO soal (id_category, level, image, question, jawaban_a, jawaban_b, jawaban_c, jawaban_d, jawaban_benar) VALUES (${data.idCategory}, ${data.level}, "${data.image}", "${data.question}", "${data.jawaban_a}", "${data.jawaban_b}", "${data.jawaban_c}", "${data.jawaban_d}", "${data.jawaban_benar}")`
-        postData(query, res)
-    }
-})
 
 app.get('/:category', (req, res) => {
     const category_id = categories(req, res)
@@ -101,6 +64,7 @@ app.get('/:category', (req, res) => {
     } else {
         res.send(datas.filter(data => data.category_id == category_id))
     }
+    run()
 })
 
 app.listen(port, () => {
